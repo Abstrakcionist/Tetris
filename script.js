@@ -138,3 +138,29 @@ function isValidMove(matrix, cellRow, cellCol){
     }
     return true
 }
+//когда фигура приземлилась
+function placeTetromino(){
+    for (let row = 0; row < tetromino.matrix.length; row++){
+        for (let col = 0; col < tetromino.matrix[row].length; col++){
+            if (tetromino.matrix[row][col]){
+                if (tetromino.row + row < 0){
+                    return showGameOver();
+                }
+                playfield[tetromino.row + row][tetromino.col + col] = tetromino.name;
+            }
+        }
+    }
+    for (let row = playfield.length - 1; row >= 0; ){
+        if (playfield[row].every(cell => !!cell)){
+            for (let r = row; r >= 0; r--){
+                for (let c = 0; c < playfield[r].lenght; c++){
+                    playfield[r][c] = playfield[r - 1][c];
+                }
+            }
+        }
+        else{
+            row--;
+        }
+    }
+    tetromino = getNextTetromino();
+}
