@@ -102,13 +102,21 @@ function getNextTetromino(){
     const matrix = tetrominos[name];
     //I и O стартуют с середины, остальные — чуть левее
     const col = playfield[0].length / 2 - Math.ceil(matrix[0].length / 2);
-    // I начинает с 21 строки (смещение -1), а все остальные — со строки 22 (смещение -2)
+    //I начинает с 21 строки (смещение -1), а все остальные — со строки 22 (смещение -2)
     const row = name === 'I' ? -1 : -2;
 
     return {
-        name: name,      // название фигуры (L, O, и т.д.)
-        matrix: matrix,  // матрица с фигурой
-        row: row,        // текущая строка (фигуры стартуют за видимой областью холста)
-        col: col         // текущий столбец
+        name: name,      //название фигуры (L, O, и т.д.)
+        matrix: matrix,  //матрица с фигурой
+        row: row,        //текущая строка (фигуры стартуют за видимой областью холста)
+        col: col         //текущий столбец
     };
-}
+};
+//поворот матрицы на 90 градусов
+function rotate(matrix){
+    const N = matrix.length - 1;
+    const result = matrix.map((row, i) =>
+      row.map((val, j) => matrix[N - j][i])
+    );
+    return result;
+};
