@@ -120,3 +120,21 @@ function rotate(matrix){
     );
     return result;
 };
+//cellRow - ряд куда сдвинется матрица, cellCol - колонка куда сдвинится матрица
+function isValidMove(matrix, cellRow, cellCol){
+    for (let row = 0; row < matrix.length; row++){
+        for (let col = 0; col < matrix[row].length; col++){
+            if (matrix[row][col] && (
+                //если матрица выходит за границы поля
+                cellCol + col < 0 ||
+                cellCol + col >= playfield[0].length ||
+                cellRow + row >= playfield.length ||
+                //или там уже стоит фигура
+                playfield[cellRow + row][cellCol + col])
+            ){
+                return false;
+            }
+        }
+    }
+    return true
+}
