@@ -182,3 +182,87 @@ function showGameOver() {
     context.textBaseline = 'middle';
     context.fillText('GAME OVER!', canvas.width / 2, canvas.height / 2);
 }
+//регистрация нажатий клавиш
+document.addEventListener('keydown', function(e){
+    //если игра закончилась то выходим
+    if (gameOver) return;
+    //<- и ->
+    if (e.which === 37 || e.which === 39){
+        //если влево, то уменьшаем индекс в столбце, если вправо — увеличиваем
+        const col = e.which === 37 ? tetromino.col - 1 : tetromino.col + 1;
+        //если так ходить можно, то запоминаем текущее положение
+        if (isValidMove(tetromino.matrix, tetromino.row, col)){
+            tetromino.col = col;
+        }
+    }
+    // стрелка вверх поворачивает
+    if (e.which === 38){
+        const matrix = rotate(tetromino.matrix);
+        if (isValidMove(matrix, tetromino.row, tetromino.col)){
+            tetromino.matrix = matrix;
+        }
+    }
+    //стрелка вниз ускоряет падение
+    if (e.which === 40){
+        const row = tetromino.row + 1;
+        if (!isValidMove(tetromino.matrix, row, tetromino.col)){
+            tetromino.row = row - 1;
+            placeTetromino();
+            return;
+        }
+        tetromino.row = row;
+    }
+});
+//главный цикл игры
+// главный цикл игры
+function loop() {
+    // начинаем анимацию
+    rAF = requestAnimationFrame(loop);
+    // очищаем холст
+    context.clearRect(0,0,canvas.width,canvas.height);
+  
+    // рисуем игровое поле с учётом заполненных фигур
+    for (let row = 0; row < 20; row++) {
+      for (let col = 0; col < 10; col++) {
+        if (playfield[row][col]) {
+          const name = playfield[row][col];
+          context.fillStyle = colors[name];
+  
+          // рисуем всё на один пиксель меньше, чтобы получился эффект «в клетку»
+          context.fillRect(col * grid, row * grid, grid-1, grid-1);
+        }
+      }
+    }
+  
+    // рисуем текущую фигуру
+    if (tetromino) {
+  
+      // фигура сдвигается вниз каждые 35 кадров
+      if (++count > 35) {
+        tetromino.row++;
+        count = 0;
+  
+        // если движение закончилось — рисуем фигуру в поле и проверяем, можно ли удалить строки
+        if (!isValidMove(tetromino.matrix, tetromino.row, tetromino.col)) {
+          tetromino.row--;
+          placeTetromino();
+        }
+      }
+  
+      // не забываем про цвет текущей фигуры
+      context.fillStyle = colors[tetromino.name];
+  
+      // отрисовываем её
+      for (let row = 0; row < tetromino.matrix.length; row++) {
+        for (let col = 0; col < tetromino.matrix[row].length; col++) {
+          if (tetromino.matrix[row][col]) {
+  
+            // и снова рисуем на один пиксель меньше
+            context.fillRect((tetromino.col + col) * grid, (tetromino.row + row) * grid, grid-1, grid-1);
+          }
+        }
+      }
+    }
+}
+// старт игры
+rAF = requestAnimationFrame(loop);
